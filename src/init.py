@@ -7,12 +7,16 @@ indeed_url = "https://kr.indeed.com/%EC%B7%A8%EC%97%85?as_and=python&as_phr&as_a
 indeed_result = requests.get(indeed_url)
 indeed_soup = BeautifulSoup(indeed_result.text, 'html.parser')
 indeed_pagination = indeed_soup.find("div", { "class": "pagination" })
-indeed_pagination_list = indeed_pagination.find("ul", { "class": "pagination-list" })
+indeed_pagination_ul = indeed_pagination.find("ul", { "class": "pagination-list" })
 
 spans = []
 
-for page in indeed_pagination_list:
-    span = page.find("span")
+for page_item in indeed_pagination_ul:
+    a_tag = page_item.find("a")
 
-    if type(span) == bs4.element.Tag:
-        spans.append(page.find("span"))
+    if a_tag:
+        spans.append(a_tag)
+    else:
+        b_tag = page_item.find("b")
+        spans.append(b_tag)
+print(spans)
