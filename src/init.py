@@ -2,21 +2,25 @@ import bs4
 import requests
 from bs4 import BeautifulSoup
 
-indeed_url = "https://kr.indeed.com/%EC%B7%A8%EC%97%85?as_and=python&as_phr&as_any&as_not&as_ttl&as_cmp&jt=all&st&salary&radius=100&l&fromage=any&limit=50&sort&psf=advsrch&from=advancedsearch&vjk=6a7446eb57ad8e77"
+indeed_url = 'https://kr.indeed.com/jobs?q=python&limit=50&radius=100&start=50'
 
 indeed_result = requests.get(indeed_url)
 indeed_soup = BeautifulSoup(indeed_result.text, 'html.parser')
-indeed_pagination = indeed_soup.find("div", { "class": "pagination" })
-indeed_pagination_ul = indeed_pagination.find("ul", { "class": "pagination-list" })
+indeed_pagination_li_list = indeed_soup.find("div", { "class": "pagination" }).find("ul", { "class": "pagination-list" }).find_all("li")
 
-spans = []
+links = []
 
-for page_item in indeed_pagination_ul:
+for page_item in indeed_pagination_li_list:
     a_tag = page_item.find("a")
 
-    if a_tag:
-        spans.append(a_tag)
-    else:
-        b_tag = page_item.find("b")
-        spans.append(b_tag)
-print(spans)
+    if a_tag != -1 and a_tag != None:
+        content = a_tag.string
+
+        if content != None:
+            links.append(content)
+
+    elif a_tag == None:
+        content = page_item.string
+        links.append(content)
+
+max_page = links[-1]
