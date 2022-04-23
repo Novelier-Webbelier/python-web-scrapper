@@ -34,19 +34,24 @@ def extract_indeed_jobs(last_page):
     for page in range(last_page):
         result = requests.get(f"{URL}&start={page*LIMIT}")
         soup = BeautifulSoup(result.text, "html.parser")
-        boxs = soup.find_all("div", { "class": "job_seen_beacon" })
+        result_contents = soup.find_all("td", { "class": "resultContent" })
 
-        for box in boxs:
-            h2_box = box.find("h2", {"class": "jobTitle"})
-            box_span = h2_box.find("span", { "class": None })
-            box_content = box_span.string
+        for result_content in result_contents:
+            job_obj = {}
+            job = result_content.select_one("div:nth-child(1)")
+            company = result_content.select_one("div:nth-child(2)")
 
-            if box_content == "new":
-                break
-            else:
-                if box_content == None:
-                    print(f"TEST1 ISNOT PASSED! {box}")
-                else:
-                    print(f"TEST1 IS PASSED! {box_content}")
+            job_name = job.find("h2").find("span", { "class" : None }).string
+            if job_name == None:
+                print(result_content)
+
+            company_name = company.find("span", { "class": "companyName" }).string
+            company_location = company.find("div", { "class": "companyLocation" }).string
+
+            job_obj["job_name"] = job_name
+            job_obj["company_name"] = company_name
+            job_obj["company_location"] = company_location
+
+            jobs.append(job_obj)
 
     return jobs
