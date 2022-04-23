@@ -29,10 +29,24 @@ def extract_indeed_pages():
     return max_page
 
 def extract_indeed_jobs(last_page):
+    jobs = []
+
     for page in range(last_page):
         result = requests.get(f"{URL}&start={page*LIMIT}")
+        soup = BeautifulSoup(result.text, "html.parser")
+        boxs = soup.find_all("div", { "class": "job_seen_beacon" })
 
-        if result.status_code == 200:
-            print("TEST 1 IS PASSED!")
-        else:
-            print("TEST 1 IS NOT PASSED!")
+        for box in boxs:
+            h2_box = box.find("h2", {"class": "jobTitle"})
+            box_span = h2_box.find("span", { "class": None })
+            box_content = box_span.string
+
+            if box_content == "new":
+                break
+            else:
+                if box_content == None:
+                    print(f"TEST1 ISNOT PASSED! {box}")
+                else:
+                    print(f"TEST1 IS PASSED! {box_content}")
+
+    return jobs
