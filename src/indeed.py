@@ -28,6 +28,28 @@ def extract_indeed_pages():
 
     return max_page
 
+def extract_job(html):
+    job_obj = {}
+    job = html.select_one("div:nth-child(1)")
+    company = html.select_one("div:nth-child(2)")
+
+    job_name = job.find("h2").find("span", { "class" : None }).string
+
+    try:
+        job_id = job.find("h2").find("a")["data-jk"]
+    except:
+        job_id = -1
+
+    company_name = company.find("span", { "class": "companyName" }).string
+    company_location = company.find("div", { "class": "companyLocation" }).string
+
+    job_obj["job_name"] = job_name
+    job_obj["link"] = f"https://kr.indeed.com/viewjob?jk={job_id}"
+    job_obj["company_name"] = company_name
+    job_obj["company_location"] = company_location
+
+    return job_obj
+
 def extract_indeed_jobs(last_page):
     jobs = []
 
@@ -37,21 +59,6 @@ def extract_indeed_jobs(last_page):
         result_contents = soup.find_all("td", { "class": "resultContent" })
 
         for result_content in result_contents:
-            job_obj = {}
-            job = result_content.select_one("div:nth-child(1)")
-            company = result_content.select_one("div:nth-child(2)")
-
-            job_name = job.find("h2").find("span", { "class" : None }).string
-            if job_name == None:
-                print(result_content)
-
-            company_name = company.find("span", { "class": "companyName" }).string
-            company_location = company.find("div", { "class": "companyLocation" }).string
-
-            job_obj["job_name"] = job_name
-            job_obj["company_name"] = company_name
-            job_obj["company_location"] = company_location
-
-            jobs.append(job_obj)
+            jobs.append(extract_job(result_content))
 
     return jobs
