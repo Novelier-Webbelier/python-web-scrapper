@@ -1,5 +1,5 @@
-from indeed import extract_indeed_pages, extract_indeed_jobs
+from indeed import get_jobs as get_indeed_jobs
+from save import save_to_file
 
-last_indeed_page = extract_indeed_pages()
-
-print(extract_indeed_jobs(last_indeed_page))
+indeed_jobs = get_indeed_jobs()
+save_to_file(indded_jobs)
