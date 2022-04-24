@@ -44,9 +44,9 @@ def extract_job(html):
     company_location = company.find("div", { "class": "companyLocation" }).string
 
     job_obj["job_name"] = job_name
-    job_obj["link"] = f"https://kr.indeed.com/viewjob?jk={job_id}"
     job_obj["company_name"] = company_name
     job_obj["company_location"] = company_location
+    job_obj["link"] = f"https://kr.indeed.com/viewjob?jk={job_id}"
 
     return job_obj
 
