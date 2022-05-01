@@ -37,7 +37,10 @@ def extract_job(html):
 
     try:
         job_id = job.find("h2").find("a")["data-jk"]
+        print(job)
     except:
+        # print(job.find("h2").find("a")["data-jk"])
+        print(job)
         job_id = -1
 
     company_name = company.find("span", { "class": "companyName" }).string
@@ -61,7 +64,7 @@ def extract_jobs(last_page):
 
         for result_content in result_contents:
             job = extract_job(result_content)
-            jobs.append(extract_job(result_content))
+            jobs.append(job)
 
     return jobs
 
